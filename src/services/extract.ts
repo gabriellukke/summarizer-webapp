@@ -1,4 +1,4 @@
-import pdfParse from "pdf-parse";
+import { extractText as pdfExtractText } from "unpdf";
 
 export class ExtractionError extends Error {}
 
@@ -8,8 +8,8 @@ export async function extractText(
 ): Promise<string> {
   if (mimeType === "application/pdf") {
     try {
-      const result = await pdfParse(buffer);
-      return result.text;
+      const { text } = await pdfExtractText(new Uint8Array(buffer));
+      return text.join("\n");
     } catch {
       throw new ExtractionError("Could not read the PDF. The file may be corrupted or password-protected.");
     }

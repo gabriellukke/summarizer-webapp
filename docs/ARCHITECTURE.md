@@ -7,7 +7,7 @@
 - Drizzle ORM
 - OpenAI API
 - Zod for validation
-- `pdf-parse` for PDF text extraction
+- `unpdf` for PDF text extraction
 - Docker + Docker Compose (local dev and reviewer setup)
 
 ## High-Level Flow
@@ -32,7 +32,7 @@
 - Calls services
 
 ### Services
-- File text extraction (pdf-parse / raw text)
+- File text extraction (unpdf / raw text)
 - LLM interaction
 - Prompt construction
 - Response parsing
