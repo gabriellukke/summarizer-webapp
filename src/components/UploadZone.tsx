@@ -2,6 +2,8 @@
 
 import { useState, useRef, useCallback } from "react";
 import type { Summary } from "@/db/schema";
+import { summarize } from "@/lib/api";
+import { ApiError } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
@@ -49,25 +51,14 @@ export default function UploadZone({ onSuccess }: Props) {
         formData.append("text", text);
       }
 
-      const res = await fetch("/api/summarize", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error ?? "Something went wrong.");
-        return;
-      }
-
-      onSuccess(data as Summary);
+      const result = await summarize(formData);
+      onSuccess(result);
       setFile(null);
       setText("");
       setShowPaste(false);
       if (fileRef.current) fileRef.current.value = "";
-    } catch {
-      setError("Network error. Please try again.");
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -77,7 +68,6 @@ export default function UploadZone({ onSuccess }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Drop zone */}
       <div
         onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
         onDragLeave={() => setDragging(false)}
@@ -90,7 +80,6 @@ export default function UploadZone({ onSuccess }: Props) {
             : "border-border hover:border-primary/50 hover:bg-muted/40"
         )}
       >
-        {/* File icon */}
         <div className="relative">
           <div className="flex h-16 w-12 flex-col rounded-md border-2 border-muted-foreground/30 bg-muted items-center justify-center">
             <div className="absolute -top-1 -right-1 rounded-sm bg-muted-foreground/20 px-1 text-[10px] font-bold text-muted-foreground">
@@ -125,7 +114,6 @@ export default function UploadZone({ onSuccess }: Props) {
         />
       </div>
 
-      {/* Paste text toggle */}
       <div className="flex items-center gap-3 text-sm text-muted-foreground">
         <Separator className="flex-1" />
         <button

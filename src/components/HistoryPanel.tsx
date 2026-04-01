@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { Summary } from "@/db/schema";
+import { getHistory, ApiError } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import SummaryResult from "./SummaryResult";
 
@@ -15,15 +16,10 @@ export default function HistoryPanel() {
     setLoading(true);
     setError(null);
     try {
-      const url = q.trim()
-        ? `/api/history?q=${encodeURIComponent(q)}`
-        : "/api/history";
-      const res = await fetch(url);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Failed to load history");
+      const data = await getHistory(q);
       setResults(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load history");
+      setError(err instanceof ApiError ? err.message : "Failed to load history");
     } finally {
       setLoading(false);
     }
