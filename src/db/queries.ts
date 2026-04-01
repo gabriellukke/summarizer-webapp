@@ -1,4 +1,4 @@
-import { ilike, or, desc } from "drizzle-orm";
+import { ilike, or, desc, eq } from "drizzle-orm";
 import { db } from "./client";
 import { summaries, type NewSummary } from "./schema";
 
@@ -9,6 +9,10 @@ export async function insertSummary(data: NewSummary) {
 
 export async function getSummaries() {
   return db.select().from(summaries).orderBy(desc(summaries.createdAt));
+}
+
+export async function deleteSummary(id: number) {
+  await db.delete(summaries).where(eq(summaries.id, id));
 }
 
 export async function searchSummaries(query: string) {

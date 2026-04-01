@@ -24,3 +24,11 @@ export async function getHistory(query?: string): Promise<Summary[]> {
   const res = await fetch(url);
   return handleResponse<Summary[]>(res);
 }
+
+export async function deleteSummary(id: number): Promise<void> {
+  const res = await fetch(`/api/summaries/${id}`, { method: "DELETE" });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new ApiError(data.error ?? "Failed to delete.", res.status);
+  }
+}

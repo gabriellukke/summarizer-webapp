@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { extractText } from "@/services/extract";
+import { extractText, ExtractionError } from "@/services/extract";
 import { summarizeText } from "@/services/summarize";
 import { insertSummary } from "@/db/queries";
 import {
@@ -70,6 +70,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(saved, { status: 201 });
   } catch (err) {
+    if (err instanceof ExtractionError) {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
     console.error("[POST /api/summarize]", err);
     return NextResponse.json(
       { error: "Failed to generate summary. Please try again." },

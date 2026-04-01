@@ -6,16 +6,68 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Props {
   summary: Summary;
+  onDelete?: (id: number) => void;
 }
 
-export default function SummaryResult({ summary }: Props) {
+export default function SummaryResult({ summary, onDelete }: Props) {
+  const createdAt = new Date(summary.createdAt).toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-base">{summary.title}</CardTitle>
+      <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <div className="space-y-0.5">
+          <CardTitle className="text-base">{summary.title}</CardTitle>
+          <p className="text-xs text-muted-foreground">{createdAt}</p>
+        </div>
+        {onDelete && (
+          <Dialog>
+            <DialogTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-destructive shrink-0"
+                />
+              }
+            >
+              Delete
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete summary?</DialogTitle>
+                <DialogDescription>
+                  &ldquo;{summary.title}&rdquo; will be permanently deleted.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+                <DialogClose
+                  render={<Button variant="destructive" />}
+                  onClick={() => onDelete(summary.id)}
+                >
+                  Delete
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </CardHeader>
       <CardContent className="space-y-5">
         <div>

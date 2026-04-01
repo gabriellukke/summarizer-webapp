@@ -21,6 +21,7 @@ export default function UploadZone({ onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const submittingRef = useRef(false);
 
   const handleFile = useCallback((f: File) => {
     setError(null);
@@ -40,6 +41,8 @@ export default function UploadZone({ onSuccess }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setError(null);
     setLoading(true);
 
@@ -60,6 +63,7 @@ export default function UploadZone({ onSuccess }: Props) {
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Network error. Please try again.");
     } finally {
+      submittingRef.current = false;
       setLoading(false);
     }
   }
