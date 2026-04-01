@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { extractText, ExtractionError } from "@/services/extract";
 import { summarizeText } from "@/services/summarize";
 import { insertSummary } from "@/db/queries";
+import { getRatelimit } from "@/lib/ratelimit";
 import {
   ACCEPTED_MIME_TYPES,
   MAX_FILE_SIZE_BYTES,
@@ -10,6 +11,12 @@ import {
 } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
+  const { success } = await getRatelimit().limit(ip);
+  if (!success) {
+    return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
