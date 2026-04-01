@@ -93,6 +93,7 @@ export default function SummarizeForm({ onSuccess }: Props) {
       <Button
         type="submit"
         disabled={loading || (!file && text.trim().length === 0)}
+        suppressHydrationWarning
       >
         {loading ? "Summarizing…" : "Summarize"}
       </Button>

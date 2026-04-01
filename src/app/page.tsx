@@ -2,25 +2,39 @@
 
 import { useState } from "react";
 import type { Summary } from "@/db/schema";
-import SummarizeForm from "@/components/SummarizeForm";
+import UploadZone from "@/components/UploadZone";
 import SummaryResult from "@/components/SummaryResult";
-import HistoryPanel from "@/components/HistoryPanel";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const [result, setResult] = useState<Summary | null>(null);
-  const [historyKey, setHistoryKey] = useState(0);
 
-  function handleSuccess(summary: Summary) {
-    setResult(summary);
-    setHistoryKey((k) => k + 1);
+  if (result) {
+    return (
+      <div className="space-y-6">
+        <SummaryResult summary={result} />
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => setResult(null)}
+        >
+          Summarize another
+        </Button>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-10">
-      <h1 className="text-3xl font-bold">Report Summarizer</h1>
-      <SummarizeForm onSuccess={handleSuccess} />
-      {result && <SummaryResult summary={result} />}
-      <HistoryPanel key={historyKey} />
+    <div className="flex flex-col items-center gap-8">
+      <div className="text-center space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">Report Summarizer</h1>
+        <p className="text-muted-foreground">
+          Upload a report and get a summary, key points, and action items instantly.
+        </p>
+      </div>
+      <div className="w-full max-w-xl">
+        <UploadZone onSuccess={setResult} />
+      </div>
     </div>
   );
 }

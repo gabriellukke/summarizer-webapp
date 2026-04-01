@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Summarizer",
@@ -18,6 +19,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body className="bg-background text-foreground antialiased">
+        <header className="border-b">
+          <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
+            <Link href="/" className="font-semibold tracking-tight hover:opacity-80 transition-opacity">
+              Summarizer
+            </Link>
+            <Link
+              href="/history"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              History
+            </Link>
+          </div>
+        </header>
         <main className="mx-auto max-w-3xl px-4 py-10">{children}</main>
       </body>
     </html>
