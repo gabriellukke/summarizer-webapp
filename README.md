@@ -14,6 +14,7 @@ A web app that summarizes reports using an LLM. Upload a `.txt` or `.pdf` file, 
 ## Features
 
 - Email/password and GitHub OAuth authentication
+- Sign-up with email confirmation, forgot password, and password reset flows
 - File upload (`.txt`, `.pdf`) or paste text
 - AI-generated summary, bullet points, and action items
 - Searchable history per user
@@ -94,6 +95,8 @@ Open [http://localhost:3000](http://localhost:3000).
 ```bash
 pnpm dev          # Start development server
 pnpm build        # Production build
+pnpm test         # Run tests (Vitest)
+pnpm test:watch   # Run tests in watch mode
 pnpm db:push      # Push schema to database
 pnpm db:studio    # Open Drizzle Studio
 ```

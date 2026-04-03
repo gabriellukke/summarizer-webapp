@@ -8,8 +8,8 @@
 - OpenAI API
 - Zod for validation
 - `unpdf` for PDF text extraction
-- Docker + Docker Compose (local dev and reviewer setup)
 - Upstash Redis (rate limiting)
+- Vitest (unit and integration tests)
 
 ## High-Level Flow
 
@@ -49,10 +49,17 @@
 
 ## Auth Flow
 
-- Provider: Supabase Auth (GitHub or Google OAuth)
+- Provider: Supabase Auth (email/password and GitHub OAuth)
 - Session is stored in cookies via Supabase SSR helpers
-- API routes extract the user from the session using `@supabase/ssr`
-- Unauthenticated requests to protected routes return 401
+- Proxy refreshes the session on every request and redirects unauthenticated users
+- API routes extract the user from the session using `@supabase/ssr` and return 401 if unauthenticated
+- Supports sign-up with email confirmation, forgot password, and password reset flows
+
+## Testing
+
+- Framework: Vitest
+- Scope: API route integration tests
+- Covers: auth guards (401 on all protected endpoints), IDOR protection, rate limiting, and happy path for summarize
 
 ## Database Schema
 
