@@ -8,7 +8,15 @@ import { Separator } from "@/components/ui/separator";
 
 type Mode = "sign-in" | "sign-up" | "forgot-password";
 
-function AuthForm({ mode, onConfirmation }: { mode: Mode; onConfirmation: (email: string) => void }) {
+function AuthForm({
+  mode,
+  onConfirmation,
+  onForgotPassword,
+}: {
+  mode: Mode;
+  onConfirmation: (email: string) => void;
+  onForgotPassword: () => void;
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,7 +65,20 @@ function AuthForm({ mode, onConfirmation }: { mode: Mode; onConfirmation: (email
     <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-3">
       <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
       {mode !== "forgot-password" && (
-        <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <div className="space-y-1">
+          <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          {mode === "sign-in" && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors"
+                onClick={onForgotPassword}
+              >
+                Forgot your password?
+              </button>
+            </div>
+          )}
+        </div>
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}
       <Button type="submit" className="w-full" disabled={loading}>
@@ -93,9 +114,7 @@ export default function SignInPage() {
     const isReset = mode === "forgot-password";
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {isReset ? "Check your email" : "Check your email"}
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Check your email</h1>
         <p className="text-sm text-muted-foreground max-w-sm">
           {isReset
             ? <>We sent a password reset link to <strong>{confirmedEmail}</strong>.</>
@@ -126,21 +145,21 @@ export default function SignInPage() {
         </p>
       </div>
 
-      <AuthForm key={mode} mode={mode} onConfirmation={setConfirmedEmail} />
+      <AuthForm
+        key={mode}
+        mode={mode}
+        onConfirmation={setConfirmedEmail}
+        onForgotPassword={() => setMode("forgot-password")}
+      />
 
       <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
         {mode === "sign-in" && (
-          <>
-            <p>
-              Don&apos;t have an account?{" "}
-              <button className="underline underline-offset-4 hover:text-foreground transition-colors" onClick={() => setMode("sign-up")}>
-                Sign up
-              </button>
-            </p>
-            <button className="underline underline-offset-4 hover:text-foreground transition-colors" onClick={() => setMode("forgot-password")}>
-              Forgot your password?
+          <p>
+            Don&apos;t have an account?{" "}
+            <button className="underline underline-offset-4 hover:text-foreground transition-colors" onClick={() => setMode("sign-up")}>
+              Sign up
             </button>
-          </>
+          </p>
         )}
         {mode !== "sign-in" && (
           <p>
