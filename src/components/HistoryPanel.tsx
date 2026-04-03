@@ -35,8 +35,12 @@ export default function HistoryPanel({ initialData }: Props) {
   }, [query, fetchHistory]);
 
   async function handleDelete(id: number) {
-    await deleteSummary(id);
-    setResults((prev) => prev.filter((s) => s.id !== id));
+    try {
+      await deleteSummary(id);
+      setResults((prev) => prev.filter((s) => s.id !== id));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to delete summary.");
+    }
   }
 
   return (

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/browser";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -106,6 +107,13 @@ function AuthForm({
   );
 }
 
+function AuthErrorBanner() {
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error_description") ?? searchParams.get("error");
+  if (!error) return null;
+  return <p className="text-sm text-destructive text-center">{error}</p>;
+}
+
 export default function SignInPage() {
   const [mode, setMode] = useState<Mode>("sign-in");
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
@@ -132,6 +140,9 @@ export default function SignInPage() {
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 py-24">
+      <Suspense>
+        <AuthErrorBanner />
+      </Suspense>
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight">
           {mode === "sign-in" ? "Sign in" : mode === "sign-up" ? "Create an account" : "Reset your password"}
