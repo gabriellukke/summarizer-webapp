@@ -2,8 +2,8 @@
 
 import { useState, useRef, useCallback } from "react";
 import type { Summary } from "@/db/schema";
-import { summarize } from "@/lib/api";
-import { ApiError } from "@/lib/api";
+import { summarize, ApiError } from "@/lib/api";
+import { MAX_FILE_SIZE_BYTES } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
@@ -24,6 +24,10 @@ export default function UploadZone({ onSuccess }: Props) {
   const submittingRef = useRef(false);
 
   const handleFile = useCallback((f: File) => {
+    if (f.size > MAX_FILE_SIZE_BYTES) {
+      setError("File exceeds 4MB limit.");
+      return;
+    }
     setError(null);
     setText("");
     setFile(f);
@@ -97,7 +101,7 @@ export default function UploadZone({ onSuccess }: Props) {
             <span className="font-medium text-primary cursor-pointer">Click to upload</span>
             <span className="text-muted-foreground"> or drag and drop</span>
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5">PDF or TXT — max 5MB</p>
+          <p className="text-xs text-muted-foreground mt-0.5">PDF or TXT — max 4MB</p>
         </div>
 
         {file && (

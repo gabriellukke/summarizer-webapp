@@ -106,7 +106,7 @@ The LLM must return valid JSON matching this shape (enforced with Zod):
 - Keep API simple and predictable
 - Search performs case-insensitive substring match against `title`, `summary`, and `original_input` using `ILIKE`
 - Accepted file types: `.txt`, `.pdf` (reject others with 400)
-- Max file size: 5MB
+- Max file size: 4MB (reject with 413)
 - Rate limiting on `POST /api/summarize` via Upstash Redis (10 requests/min per IP)
 - Supabase used for both auth and database to minimize infrastructure complexity
 

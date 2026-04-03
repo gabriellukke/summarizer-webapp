@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     if (file && file.size > 0) {
       if (file.size > MAX_FILE_SIZE_BYTES) {
-        return NextResponse.json({ error: "File exceeds 5MB limit" }, { status: 400 });
+        return NextResponse.json({ error: "File exceeds 4MB limit." }, { status: 413 });
       }
 
       const mimeType = file.type;
