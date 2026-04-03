@@ -23,6 +23,9 @@ export async function GET(request: NextRequest) {
         `${origin}/auth/sign-in?error=${encodeURIComponent(error.message)}`
       );
     }
+    if (type === "recovery") {
+      return NextResponse.redirect(`${origin}/auth/reset-password`);
+    }
   } else {
     return NextResponse.redirect(
       `${origin}/auth/sign-in?error=${encodeURIComponent("Invalid confirmation link.")}`
