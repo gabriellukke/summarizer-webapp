@@ -3,6 +3,7 @@ import { extractText, ExtractionError } from "@/services/extract";
 import { summarizeText } from "@/services/summarize";
 import { insertSummary } from "@/db/queries";
 import { getRatelimit } from "@/lib/ratelimit";
+import { getRequiredUser } from "@/lib/supabase/user";
 import {
   ACCEPTED_MIME_TYPES,
   MAX_FILE_SIZE_BYTES,
@@ -11,6 +12,9 @@ import {
 } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
+  const { user, unauthorized } = await getRequiredUser();
+  if (unauthorized) return unauthorized;
+
   const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
   const { success } = await getRatelimit().limit(ip);
   if (!success) {
@@ -68,6 +72,7 @@ export async function POST(req: NextRequest) {
     const output = await summarizeText(extractedText);
 
     const saved = await insertSummary({
+      userId: user.id,
       title,
       originalInput: extractedText,
       summary: output.summary,

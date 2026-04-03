@@ -1,4 +1,4 @@
-import { ilike, or, desc, eq } from "drizzle-orm";
+import { ilike, or, desc, eq, and } from "drizzle-orm";
 import { db } from "./client";
 import { summaries, type NewSummary } from "./schema";
 
@@ -7,24 +7,31 @@ export async function insertSummary(data: NewSummary) {
   return row;
 }
 
-export async function getSummaries() {
-  return db.select().from(summaries).orderBy(desc(summaries.createdAt));
+export async function getSummaries(userId: string) {
+  return db
+    .select()
+    .from(summaries)
+    .where(eq(summaries.userId, userId))
+    .orderBy(desc(summaries.createdAt));
 }
 
-export async function deleteSummary(id: number) {
-  await db.delete(summaries).where(eq(summaries.id, id));
+export async function deleteSummary(id: number, userId: string) {
+  await db.delete(summaries).where(and(eq(summaries.id, id), eq(summaries.userId, userId)));
 }
 
-export async function searchSummaries(query: string) {
+export async function searchSummaries(query: string, userId: string) {
   const pattern = `%${query}%`;
   return db
     .select()
     .from(summaries)
     .where(
-      or(
-        ilike(summaries.title, pattern),
-        ilike(summaries.summary, pattern),
-        ilike(summaries.originalInput, pattern)
+      and(
+        eq(summaries.userId, userId),
+        or(
+          ilike(summaries.title, pattern),
+          ilike(summaries.summary, pattern),
+          ilike(summaries.originalInput, pattern)
+        )
       )
     )
     .orderBy(desc(summaries.createdAt));

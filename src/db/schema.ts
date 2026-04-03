@@ -1,7 +1,8 @@
-import { pgTable, serial, text, jsonb, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, uuid, jsonb, timestamp } from "drizzle-orm/pg-core";
 
 export const summaries = pgTable("summaries", {
   id: serial("id").primaryKey(),
+  userId: uuid("user_id").notNull(),
   title: text("title").notNull(),
   originalInput: text("original_input").notNull(),
   summary: text("summary").notNull(),
