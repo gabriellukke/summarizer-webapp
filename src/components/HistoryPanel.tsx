@@ -30,9 +30,16 @@ export default function HistoryPanel({ initialData }: Props) {
   }, []);
 
   useEffect(() => {
+    if (!query) return;
     const timer = setTimeout(() => fetchHistory(query), 300);
     return () => clearTimeout(timer);
   }, [query, fetchHistory]);
+
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    const q = e.target.value;
+    setQuery(q);
+    if (!q) fetchHistory("");
+  }
 
   async function handleDelete(id: number) {
     try {
@@ -50,7 +57,7 @@ export default function HistoryPanel({ initialData }: Props) {
       <Input
         type="search"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={handleSearch}
         placeholder="Search summaries…"
       />
 
